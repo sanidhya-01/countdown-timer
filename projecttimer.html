@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown Timer</title>
+    <!-- Include Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        /* Additional CSS can be placed here */
+    </style>
+</head>
+
+<body class="bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 min-h-screen bg-cover" style="background-image: url('https://source.unsplash.com/1500x800/?nature,scenery');">
+    <!-- Navbar -->
+    <!-- <nav class="bg-gray-800 p-6 mb-6">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between">
+                <div class="flex space-x-4">
+                    <a href="#" class="text-white">Home</a>
+                    <a href="#" class="text-white">About</a>
+                    <a href="#" class="text-white">Contact</a>
+                </div>
+                <div>
+                     Navbar Right
+                </div>
+            </div>
+        </div>
+    </nav> -->
+
+    <!-- Main Content -->
+        
+    <div class="mx-auto px-4 mt-32 py-4">
+        <div class="text-center text-white">
+            <h1 class="text-4xl font-bold mb-4">Countdown Timer</h1>
+            <div class="flex justify-center space-x-4 mb-4">
+                <div class="flex flex-col">
+                    <label for="" class="text-xs">Days</label>
+                    <input id="monthInput" type="number" class="rounded-lg border border-gray-400 px-4 py-2 bg-transparent text-white" min="1" max="12" placeholder="MM" style="width: 60px;">
+                    <div class="flex justify-center">
+                        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline" onclick="increment('monthInput')">+</button>
+                        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline" onclick="decrement('monthInput')">-</button>
+                    </div>
+                </div>
+                <div class="flex flex-col">
+                    <label for="" class="text-xs">Hours</label>
+                    <input id="dayInput" type="number" class="rounded-lg border border-gray-400 px-4 py-2 bg-transparent text-white" min="1" max="31" placeholder="DD" style="width: 60px;">
+                    <div class="flex justify-center">
+                        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline" onclick="increment('dayInput')">+</button>
+                        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline" onclick="decrement('dayInput')">-</button>
+                    </div>
+                </div>
+                <div class="flex flex-col">
+                    <label for="" class="text-xs">Minutes</label>
+                    <input id="hourInput" type="number" class="rounded-lg border border-gray-400 px-4 py-2 bg-transparent text-white" min="0" max="23" placeholder="HH" style="width: 60px;">
+                    <div class="flex justify-center">
+                        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline" onclick="increment('hourInput')">+</button>
+                        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline" onclick="decrement('hourInput')">-</button>
+                    </div>
+                </div>
+                <div class="flex flex-col">
+                    <label for="" class="text-xs">Seconds</label>
+                    <input id="secondInput" type="number" class="rounded-lg border border-gray-400 px-4 py-2 bg-transparent text-white" min="0" max="59" placeholder="SS" style="width: 60px;">
+                    <div class="flex justify-center">
+                        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline" onclick="increment('secondInput')">+</button>
+                        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline" onclick="decrement('secondInput')">-</button>
+                    </div>
+                </div>
+            </div>
+            <div id="timer" class="text-6xl font-bold mb-4 h-20"></div>
+            <div class="space-x-4">
+                <button id="startBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-4">Start</button>
+                <button id="stopBtn" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Stop</button>
+                <button id="resetBtn" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let timerInterval;
+        let isRunning = false;
+        let countdownTime = 0;
+
+        const monthInput = document.getElementById('monthInput');
+        const dayInput = document.getElementById('dayInput');
+        const hourInput = document.getElementById('hourInput');
+        const secondInput = document.getElementById('secondInput');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const timerDisplay = document.getElementById('timer');
+
+        function increment(id) {
+            const input = document.getElementById(id);
+            if (input.value < parseInt(input.max)) {
+                input.value++;
+            }
+        }
+
+        function decrement(id) {
+            const input = document.getElementById(id);
+            if (input.value > parseInt(input.min)) {
+                input.value--;
+            }
+        }
+
+        startBtn.addEventListener('click', function () {
+            if (!isRunning) {
+                const month = parseInt(monthInput.value);
+                const day = parseInt(dayInput.value);
+                const hour = parseInt(hourInput.value);
+                const second = parseInt(secondInput.value);
+
+                if (!isNaN(month) && !isNaN(day) && !isNaN(hour) && !isNaN(second)) {
+                    countdownTime = (new Date().setMonth(month - 1, day) + (hour * 60 * 60 + second) * 1000) - Date.now();
+                    if (countdownTime > 0) {
+                        timerInterval = setInterval(updateCountdown, 1000);
+                        isRunning = true;
+                    } else {
+                        alert('Please enter a valid future time');
+                    }
+                } else {
+                    alert('Please enter valid inputs');
+                }
+            }
+        });
+
+        stopBtn.addEventListener('click', function () {
+            clearInterval(timerInterval);
+            isRunning = false;
+        });
+
+        resetBtn.addEventListener('click', function () {
+            clearInterval(timerInterval);
+            isRunning = false;
+            countdownTime = 0;
+            timerDisplay.textContent = '';
+        });
+
+        function updateCountdown() {
+            countdownTime -= 1000;
+
+            if (countdownTime <= 0) {
+                clearInterval(timerInterval);
+                timerDisplay.textContent = 'Countdown Ended!';
+                return;
+            }
+            const days = Math.floor(countdownTime / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((countdownTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((countdownTime % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((countdownTime % (1000 * 60)) / 1000);
+
+            timerDisplay.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+        }
+    </script>
+</body>
+
+</html>
